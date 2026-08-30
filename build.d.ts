@@ -7,3 +7,5 @@ declare const __SIGNAL_CLOUD_CONFIG__: {
   url: string;
   anonKey: string;
 };
+
+declare module '*.css';
