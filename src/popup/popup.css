@@ -1,0 +1,257 @@
+body {
+  width: 340px;
+}
+
+.wrap {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 40px 0;
+}
+
+.header {
+  padding: 4px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #0d1421;
+  border: 1px solid var(--border);
+}
+
+.logo-mark::before,
+.logo-mark::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  background: var(--accent);
+}
+
+.logo-mark::before { left: 6px; height: 9px; }
+.logo-mark::after { right: 6px; height: 19px; }
+
+.header h1 {
+  font-size: 15px;
+  letter-spacing: 3px;
+  font-weight: 800;
+}
+
+.header p {
+  font-size: 10.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.4px;
+}
+
+.account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  padding: 5px;
+  color: var(--text-dim);
+  background: transparent;
+  cursor: pointer;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.sync-dot.online {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.12);
+}
+
+.popup-error {
+  border-left: 2px solid var(--danger);
+  padding: 7px 9px;
+  color: #fecaca;
+  background: rgba(248, 113, 113, 0.07);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.card h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.big-score {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.threshold-label {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.threshold-label.off {
+  color: var(--text-dim);
+}
+
+.presets {
+  display: flex;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.preset {
+  flex: 1;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 5px 2px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.preset.active {
+  color: #052e21;
+  background: var(--accent);
+  border-color: transparent;
+}
+
+.hint {
+  margin-top: 9px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.mode {
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 7px 2px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.mode.active {
+  color: #dbeafe;
+  background: rgba(91, 157, 255, 0.18);
+  border-color: rgba(91, 157, 255, 0.45);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border);
+}
+
+.toggle-label {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.toggle-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.btn-small {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.full {
+  width: 100%;
+}
+
+.interests {
+  font-size: 12px;
+  color: #a8c7fa;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.stats-grid strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.stats-grid span {
+  font-size: 10.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stats-grid .filtered strong {
+  color: var(--accent);
+}
+
+.avg,
+.time-saved {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.time-saved {
+  color: var(--accent-2);
+  margin-bottom: 10px;
+}

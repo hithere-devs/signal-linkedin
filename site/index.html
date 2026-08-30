@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Signal scores your LinkedIn feed for relevance, hides noise, and keeps every decision explainable.">
+  <meta property="og:title" content="Signal for your LinkedIn feed">
+  <meta property="og:description" content="Keep the useful posts. Filter the rest.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://hithere-devs.github.io/signal-linkedin/assets/social-card.png">
+  <title>Signal | LinkedIn Feed Intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="./"><span class="mark" aria-hidden="true"></span>SIGNAL</a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#install">Install</a>
+        <a class="github-link" href="https://github.com/hithere-devs/signal-linkedin">GitHub</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Open source Chrome extension</p>
+          <h1>A LinkedIn feed that respects your attention.</h1>
+          <p class="lede">Signal scores each post against what matters to you, explains the decision, and filters the noise before it steals another hour.</p>
+          <div class="actions">
+            <a class="button primary" href="#install">Install Signal</a>
+            <a class="button" href="https://github.com/hithere-devs/signal-linkedin">Read the source</a>
+          </div>
+          <p class="proof">Local by default. No analytics. Optional account sync and AI.</p>
+        </div>
+
+        <div class="demo" aria-label="Example feed scoring">
+          <div class="demo-head"><span>YOUR FEED, RANKED FOR VALUE</span><span class="demo-score">55+</span></div>
+          <article class="post">
+            <div class="post-meta"><span>AI engineering</span><span class="score">92</span></div>
+            <h3>Seven lessons from shipping an agent in production</h3>
+            <p>Concrete benchmarks, failure modes, and fixes.</p>
+          </article>
+          <article class="post">
+            <div class="post-meta"><span>Developer tools</span><span class="score">81</span></div>
+            <h3>A practical guide to reducing CI time by 43%</h3>
+            <p>Actionable steps with measured results.</p>
+          </article>
+          <article class="post filtered">
+            <div class="post-meta"><span>Engagement bait</span><span class="score low">14</span></div>
+            <h3>Agree?</h3>
+            <p>Collapsed by Signal.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="how">
+        <div class="section-grid">
+          <div>
+            <p class="eyebrow">Built for control</p>
+            <h2>You decide what deserves the feed.</h2>
+          </div>
+          <div class="section-copy">
+            <div class="principle"><span class="number">01</span><div><h3>Make the scorer yours</h3><p>Set your role, skills, interests, target companies, career goals, and topics to avoid.</p></div></div>
+            <div class="principle"><span class="number">02</span><div><h3>See every decision</h3><p>Each badge shows the score, category, and reasons. Feedback controls teach Signal what it missed.</p></div></div>
+            <div class="principle"><span class="number">03</span><div><h3>Keep data under your control</h3><p>Local heuristics work offline. Cloud sync and external AI are optional and require explicit site access.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="install">
+        <div class="install">
+          <div>
+            <p class="eyebrow">Install the open-source build</p>
+            <h2>Start with the release package.</h2>
+            <p class="section-copy">Until the Chrome Web Store listing is live, download the latest release, unzip it, and load the folder from Chrome's Extensions page with Developer mode enabled.</p>
+            <div class="actions"><a class="button primary" href="https://github.com/hithere-devs/signal-linkedin/releases/latest">Download latest release</a></div>
+          </div>
+          <pre><code>npm ci
+npm run package
+
+# Load the generated dist/ folder
+# from chrome://extensions</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Signal is independent and not affiliated with LinkedIn.</span>
+      <span class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://github.com/hithere-devs/signal-linkedin/issues">Support</a></span>
+    </footer>
+  </div>
+</body>
+</html>

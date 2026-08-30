@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    env:
+      SIGNAL_SUPABASE_URL: ${{ secrets.SIGNAL_SUPABASE_URL }}
+      SIGNAL_SUPABASE_ANON_KEY: ${{ secrets.SIGNAL_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Require cloud configuration for official releases
+        run: test -n "$SIGNAL_SUPABASE_URL" && test -n "$SIGNAL_SUPABASE_ANON_KEY"
+      - run: npm ci
+      - run: npm run package
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            release/*.zip
+            release/*.sha256

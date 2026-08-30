@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.zip
+release/
+.env
+.DS_Store
+coverage/
+SIGNAL_SESSION_TRANSCRIPT.md
