@@ -19,8 +19,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Require cloud configuration for official releases
-        run: test -n "$SIGNAL_SUPABASE_URL" && test -n "$SIGNAL_SUPABASE_ANON_KEY"
+      - name: Check cloud configuration
+        run: |
+          if [ -n "$SIGNAL_SUPABASE_URL" ] && [ -n "$SIGNAL_SUPABASE_ANON_KEY" ]; then
+            echo "Building with account sync enabled (Supabase configured)."
+          else
+            echo "::warning::Supabase secrets not set - building local-first package with account sync unconfigured."
+          fi
       - run: npm ci
       - run: npm run package
       - uses: softprops/action-gh-release@v2
