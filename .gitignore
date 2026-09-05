@@ -6,3 +6,10 @@ release/
 .DS_Store
 coverage/
 SIGNAL_SESSION_TRANSCRIPT.md
+graphify-out/
+.graphify_cache/
+.impeccable/screenshots/
+.impeccable/mocks/
+.impeccable/detector-findings.json
+.impeccable/finish-review.md
+site-dist/

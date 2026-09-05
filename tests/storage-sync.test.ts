@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_PROFILE, DEFAULT_SETTINGS } from '../src/lib/defaults';
-import { applySyncSnapshot, createSyncSnapshot, getSettings, saveProfile, saveSettings } from '../src/lib/storage';
+import { addStats, applySyncSnapshot, createSyncSnapshot, getSettings, getTodayStats, patchAi, patchSettings, resetStats, saveProfile, saveSettings } from '../src/lib/storage';
 import type { SyncSnapshot } from '../src/types';
 
 function installChromeStorageMock() {
@@ -61,5 +61,27 @@ describe('cloud-safe storage snapshots', () => {
     expect(settings.threshold).toBe(80);
     expect(settings.ai.model).toBe('model-a');
     expect(settings.ai.apiKey).toBe('keep-local');
+  });
+});
+
+describe('serialized local writes', () => {
+  it('keeps rapid changes to separate settings', async () => {
+    await Promise.all([patchSettings({ threshold: 75 }), patchSettings({ mode: 'blur' }), patchSettings({ hideAds: false })]);
+    expect(await getSettings()).toMatchObject({ threshold: 75, mode: 'blur', hideAds: false });
+  });
+
+  it('keeps provider configuration and filter changes when they overlap', async () => {
+    await Promise.all([patchAi({ model: 'a-model', baseUrl: 'https://example.com/v1' }), patchSettings({ enabled: false })]);
+    expect(await getSettings()).toMatchObject({ enabled: false, ai: { model: 'a-model', baseUrl: 'https://example.com/v1' } });
+  });
+
+  it('does not lose statistics from concurrent tabs', async () => {
+    await Promise.all([addStats({ analyzed: 4, shown: 3, hidden: 1 }), addStats({ analyzed: 5, shown: 2, hidden: 3 })]);
+    expect(await getTodayStats()).toMatchObject({ analyzed: 9, shown: 5, hidden: 4 });
+  });
+
+  it('resets statistics after already queued updates', async () => {
+    await Promise.all([addStats({ analyzed: 4, shown: 4 }), resetStats()]);
+    expect((await getTodayStats()).analyzed).toBe(0);
   });
 });

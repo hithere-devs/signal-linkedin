@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "scope": "Signal workspace redesign media inventory",
+  "reviewed_at": "2026-09-05",
+  "references": [
+    { "path": ".impeccable/mocks/01-overview-workspace.png", "role": "Approved overview composition", "dimensions": [2528, 1696] },
+    { "path": ".impeccable/mocks/02-feed-preview-workspace.png", "role": "Companion feed-control reference only", "dimensions": [2528, 1696] },
+    { "path": "PRODUCT.md", "role": "Product truth" },
+    { "path": ".impeccable/surfaces/src-dashboard-app-tsx.md", "role": "Approved scope and component grammar" },
+    { "path": "scripts/gen-icons.mjs", "role": "Existing three-bar extension identity" },
+    { "path": "public/manifest.json", "role": "Required extension icon files and version" }
+  ],
+  "conclusion": "No new raster assets are needed. Retain the three existing Chrome extension icons; build every workspace visual in React, CSS, SVG, or Lucide.",
+  "qa_scope": "Both reference images and all three retained icon files were visually inspected. Accepted semantic rows confirm the no-raster classification and handoff, not the fidelity of application code still under construction.",
+  "missing_media": [],
+  "produce": [],
+  "direct": [
+    {
+      "id": "chrome-icon-16",
+      "source_crop": "public/icons/icon16.png",
+      "output_path": "public/icons/icon16.png",
+      "strategy": "Retain the existing standalone project asset unchanged for Chrome toolbar and manifest use.",
+      "prompt_used": null,
+      "dimensions": [16, 16],
+      "format": "png",
+      "transparency": "alpha",
+      "deviations": [],
+      "qa_status": "accepted"
+    },
+    {
+      "id": "chrome-icon-48",
+      "source_crop": "public/icons/icon48.png",
+      "output_path": "public/icons/icon48.png",
+      "strategy": "Retain the existing standalone project asset unchanged for Chrome manifest use.",
+      "prompt_used": null,
+      "dimensions": [48, 48],
+      "format": "png",
+      "transparency": "alpha",
+      "deviations": [],
+      "qa_status": "accepted"
+    },
+    {
+      "id": "chrome-icon-128",
+      "source_crop": "public/icons/icon128.png",
+      "output_path": "public/icons/icon128.png",
+      "strategy": "Retain the existing standalone project asset unchanged for Chrome manifest use.",
+      "prompt_used": null,
+      "dimensions": [128, 128],
+      "format": "png",
+      "transparency": "alpha",
+      "deviations": [],
+      "qa_status": "accepted"
+    }
+  ],
+  "semantic": [
+    {
+      "id": "workspace-shell-navigation",
+      "implementation": {
+        "components": "React aside/nav, utility header, main and footer; real links or buttons for routes, source, demo, theme and Open LinkedIn.",
+        "css": "Desktop sidebar and fluid content grid; white panels, restrained neutral dividers, 14px major corners and 8px controls. CSS owns all backgrounds, spacing, borders and state treatments.",
+        "vectors": "Lucide navigation, external-link, calendar, chevron and theme icons, hidden from assistive technology when adjacent text supplies the label.",
+        "responsive": "Replace the sidebar with a compact header and horizontal navigation on narrow screens. Stack panels without shrinking controls into a dashboard thumbnail.",
+        "raster_assets": []
+      },
+      "notes": "The mock's navy presentation surround and rounded outer image frame are not product UI. No shell or card screenshots may ship.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "signal-brand-lockup",
+      "implementation": {
+        "components": "A reusable SignalMark component beside the live-text Signal wordmark.",
+        "css": "Align three ascending bars on a common baseline. Apply the workspace accent through currentColor and set the wordmark in the chosen system sans.",
+        "vectors": "Inline SVG rectangles or three CSS bars. Preserve the existing rising-bar silhouette; do not trace the invented wifi or wave marks.",
+        "responsive": "Keep the glyph crisp at popup, sidebar and compact-header sizes; retain a readable accessible name.",
+        "raster_assets": []
+      },
+      "notes": "Existing toolbar PNGs keep their current artwork. Their green/charcoal palette does not override the approved blue workspace direction.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "typography",
+      "implementation": {
+        "components": "Semantic headings, paragraphs, labels, outputs and tabular numeric text.",
+        "css": "Use a local humanist system-sans stack. Start near 30px page headings, 16px section headings, 14px body and 12px secondary text; use tabular numerals for data.",
+        "vectors": "None.",
+        "responsive": "Allow heading and label wrapping; preserve readable type and control labels in the compact popup and narrow layouts.",
+        "raster_assets": []
+      },
+      "notes": "No font download, text raster, faux lettering image or bespoke font asset is required.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "outcome-strip",
+      "implementation": {
+        "components": "A dl or semantic metric group for reviewed, kept, filtered and estimated time saved.",
+        "css": "One shared white strip with aligned values, labels and a visible estimation note; use restrained accent colors rather than separate decorative tiles.",
+        "vectors": "Lucide message, check, filter and clock icons.",
+        "responsive": "Use a two-column or stacked arrangement when four metrics no longer fit; keep explanatory text beside its metric.",
+        "raster_assets": []
+      },
+      "notes": "Calculate from real aggregate data. Example counts belong only to a clearly labeled preview; the mock is not a data source.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "feed-activity-chart",
+      "implementation": {
+        "components": "A figure with a live seven-day stacked bar chart, legend and textual values or accessible data table.",
+        "css": "CSS owns the panel, spacing, axis labels and legend. Preserve the approved broad chart area beside the smaller threshold panel.",
+        "vectors": "Responsive SVG rects, rules and labels or CSS bars driven by the same aggregate dataset. Scale segments and totals from actual values.",
+        "responsive": "Use a fluid viewBox or grid, keep day labels legible and stack the threshold panel below on narrow screens.",
+        "raster_assets": []
+      },
+      "notes": "Do not trace inconsistent bar heights, bracket values or totals in the generated comp. No chart image is needed.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "threshold-slider-presets",
+      "implementation": {
+        "components": "A labeled input type=range from 0 to 100, an output for the current threshold, and real buttons or radio inputs for presets.",
+        "css": "CSS owns the blue filled track, neutral remainder, thumb, preset selection and visible focus. Link the displayed score and preview state to the same value.",
+        "vectors": "Lucide edit, open or target icons only where the approved control benefits from them.",
+        "responsive": "Make the range span its panel, keep a usable touch target and wrap preset controls without dropping their labels.",
+        "raster_assets": []
+      },
+      "notes": "Keyboard input and accessible current values must work. The companion mock informs the preview interaction, not a second visual identity.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "filter-modes-and-status-switches",
+      "implementation": {
+        "components": "A fieldset for collapse, hide, blur and score-only modes; labeled checkbox/switch inputs for filtering status and sponsored-post filtering.",
+        "css": "CSS draws tracks, thumbs, selected mode borders and state feedback. Apply blur to example content only when that mode is active, never bake it into an image.",
+        "vectors": "Lucide collapse, eye-off, list, pause and play icons; use a precise vector blur glyph if a matching library icon is unavailable.",
+        "responsive": "Wrap the mode grid on narrow panels and preserve text labels and keyboard focus. Do not rely on icon shape or color alone.",
+        "raster_assets": []
+      },
+      "notes": "The blurred blot in the companion mock is a generated control defect, not a required bitmap.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "category-composition-bars",
+      "implementation": {
+        "components": "A semantic list with category labels, percentages or counts, and data-driven progress bars.",
+        "css": "Use label/bar/value columns, a neutral track and blue fill; CSS owns rounded bar ends and consistent row spacing.",
+        "vectors": "Lucide category icons with visible text labels.",
+        "responsive": "Move each bar below its label/value row when necessary; keep numeric text visible.",
+        "raster_assets": []
+      },
+      "notes": "Use the application's category names and totals. The graphic is a data display, not an illustration.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "filter-reason-list",
+      "implementation": {
+        "components": "An ordered list of actual filtering reasons with associated counts.",
+        "css": "Align rank, optional icon, label and count using a compact grid with neutral separators or whitespace.",
+        "vectors": "Lucide reason icons where the reason has a clear equivalent; use text rather than inventing symbols.",
+        "responsive": "Let reason labels wrap while counts remain aligned; stack beneath categories on narrow screens.",
+        "raster_assets": []
+      },
+      "notes": "Mock labels such as low engagement or political content are not evidence of implemented filtering rules.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "profile-tags",
+      "implementation": {
+        "components": "Reuse or adapt the existing TagEditor with an input, a list of live-text tags and labeled remove buttons.",
+        "css": "Wrap compact tags in a flexible container; CSS owns chip fill, border, padding and interaction states.",
+        "vectors": "Lucide X or a small inline vector for removal.",
+        "responsive": "Wrap long labels and avoid fixed widths; keep remove controls reachable by keyboard and touch.",
+        "raster_assets": []
+      },
+      "notes": "Tags are editable profile data, not artwork. They need no generated asset.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "fictional-feed-preview",
+      "implementation": {
+        "components": "React article elements for explicitly fictional example posts, live score/status badges, expandable explanations and real Show post buttons.",
+        "css": "Use white post panels and a pale explanation region. CSS owns score chips, kept/filtered states, dimension bars and collapse/hide/blur transitions.",
+        "vectors": "Lucide check, arrow and explanation icons; draw dimension bars in CSS or SVG from the example score data.",
+        "responsive": "Stack posts and controls, wrap titles, and collapse multi-column score details into labeled rows. Respect reduced motion.",
+        "raster_assets": []
+      },
+      "notes": "Neither inspected reference requires author portraits, photography or post thumbnails. Text-only examples are sufficient and must not imply access to the user's LinkedIn feed.",
+      "qa_status": "accepted"
+    },
+    {
+      "id": "aggregate-data-ledger",
+      "implementation": {
+        "components": "A semantic table or definition list for available aggregate data, with real labels, dates, counts and any existing local-data actions.",
+        "css": "Use tabular numerals, aligned columns and light rules within the approved panel system. Keep utility buttons and file inputs as controls.",
+        "vectors": "Lucide download, upload or delete icons only for actions the implementation supports.",
+        "responsive": "Use labeled stacked rows or an explicitly scrollable table when necessary; never shrink an entire ledger image.",
+        "raster_assets": []
+      },
+      "notes": "This role is semantic by requirement and inherits the approved workspace grammar. It must not invent saved-article history or adopt the rejected third comp as its overall composition.",
+      "qa_status": "accepted"
+    }
+  ],
+  "excluded_mock_defects": [
+    "Presentation-only outer frame and navy backdrop.",
+    "Invented wifi or wave logos in place of the established ascending bars.",
+    "Unconditional claim that data never leaves the device; optional AI and sync can send data.",
+    "Fabricated version 1.2.0; the inspected package and manifest specify 1.0.0.",
+    "Inconsistent chart totals, segment values and plotted heights.",
+    "Reason/category labels unsupported by the product's actual data model.",
+    "Raster-looking blur decoration in a semantic mode control."
+  ],
+  "execution_order": [
+    "No raster production or mock cropping.",
+    "Retain the existing Chrome icon pack and its generator.",
+    "Implement the listed semantic roles with the approved layout and shared component grammar.",
+    "Parent verifies rendered fidelity, responsive states, real data and accessibility."
+  ],
+  "blockers": [],
+  "assumptions": [
+    "The user delegated the direction and reference approval, as recorded in PRODUCT.md and the surface brief.",
+    "Mock PNGs remain reference material and are not imported into the shipping interface.",
+    "Local system fonts and the installed lucide-react package cover type and standard icon needs.",
+    "No photo, portrait, illustration, texture, decorative background or screenshot asset is part of this redesign.",
+    "The three retained PNGs belong to Chrome extension packaging, not the workspace's semantic UI.",
+    "Production credentials and cloud configuration were not inspected."
+  ]
+}

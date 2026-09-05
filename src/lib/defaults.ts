@@ -29,6 +29,7 @@ export const DEFAULT_WEIGHTS: ScoringWeights = {
 };
 
 export const DEFAULT_SETTINGS: ExtensionSettings = {
+  enabled: true,
   threshold: 55,
   mode: 'collapse',
   hideAds: true,
@@ -106,6 +107,7 @@ export function normalizeSettings(raw: unknown): ExtensionSettings {
   ) as unknown as ScoringWeights;
 
   return {
+    enabled: bool(input.enabled, DEFAULT_SETTINGS.enabled),
     threshold: Math.round(finiteNumber(input.threshold, DEFAULT_SETTINGS.threshold, 0, 100)),
     mode: enumValue(input.mode, ['hide', 'collapse', 'blur', 'score'] as const, DEFAULT_SETTINGS.mode as FilterMode),
     hideAds: bool(input.hideAds, DEFAULT_SETTINGS.hideAds),

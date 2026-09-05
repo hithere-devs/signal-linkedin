@@ -49,6 +49,7 @@ describe('Supabase cloud client', () => {
       version: 1,
       updatedAt: 123,
       settings: {
+        enabled: true,
         threshold: 55,
         mode: 'collapse',
         hideAds: true,

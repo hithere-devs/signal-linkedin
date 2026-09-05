@@ -10,6 +10,7 @@ import type {
 } from '../types';
 import { createLogger } from '../lib/logger';
 import { postHash } from '../lib/hash';
+import { shouldHidePost } from '../lib/filtering';
 import { extractFeatures, findFeedPosts } from './dom';
 import { applyResultToDom, ensurePageStyles, hideLoadingIndicator, markAnalyzed, showLoadingIndicator } from './filter';
 
@@ -127,9 +128,10 @@ async function analyzeBatch(batch: HTMLElement[]): Promise<void> {
       markAnalyzed(root);
       continue;
     }
-    state.settings = outcome.settings;
     resultsByRoot.set(root, outcome.result);
-    applyDecision(root, outcome.result, true);
+    // A request can finish after the user pauses or changes modes. Use the
+    // latest storage state, not the settings captured by that old request.
+    applyDecision(root, outcome.result, state.settings?.enabled ?? false);
     markAnalyzed(root);
   }
 }
@@ -179,13 +181,7 @@ function applyDecision(root: HTMLElement, result: AnalysisResult, countStats = f
     ? { ...result, isAd: override === 'show' ? false : result.isAd }
     : result;
 
-  let hidden: boolean;
-  if (override === 'show') hidden = false;
-  else if (result.isAd && settings.hideAds) hidden = true;
-  else if (result.forceHide) hidden = true;
-  else if (result.forceShow) hidden = false;
-  else if (settings.jobTreatment === 'hide' && result.isJob) hidden = true;
-  else hidden = effective.score < settings.threshold;
+  const hidden = shouldHidePost(result, settings, override);
 
   applyResultToDom(root, effective, {
     settings,
@@ -196,7 +192,7 @@ function applyDecision(root: HTMLElement, result: AnalysisResult, countStats = f
       if (r) applyDecision(root, r, false);
     },
     onFeedback: (_hash, dir, tags) => {
-      void send({ type: 'feedback', hash: result.hash, dir, tags }).catch(() => {});
+      return send<void>({ type: 'feedback', hash: result.hash, dir, tags });
     }
   }, hidden);
 
@@ -222,7 +218,7 @@ function topReasonKey(result: AnalysisResult): string {
 }
 
 function scan(): void {
-  if (!state.settings) return;
+  if (!state.settings?.enabled) return;
   enqueueRoots(findFeedPosts());
   for (const root of [...resultsByRoot.keys()]) {
     if (!root.isConnected) resultsByRoot.delete(root);
@@ -271,7 +267,17 @@ async function init(): Promise<void> {
     if (changes['signal.settings']) state.settings = changes['signal.settings'].newValue as ExtensionSettings;
     if (changes['signal.overrides']) state.overrides = (changes['signal.overrides'].newValue ?? {}) as Record<string, 'show' | 'hide'>;
     if (changes['signal.signals']) state.signals = changes['signal.signals'].newValue as FeedbackSignals;
-    if (changes['signal.settings'] || changes['signal.overrides']) reevaluateAll();
+    if (changes['signal.settings'] || changes['signal.overrides']) {
+      if (!state.settings?.enabled) {
+        for (const root of analysisQueue.splice(0)) {
+          queued.delete(root);
+          hideLoadingIndicator(root);
+        }
+        document.querySelectorAll('[data-signal-loading]').forEach((node) => node.remove());
+      }
+      reevaluateAll();
+      scan();
+    }
   });
 
   const observer = new MutationObserver(scheduleScan);

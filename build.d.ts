@@ -9,3 +9,5 @@ declare const __SIGNAL_CLOUD_CONFIG__: {
 };
 
 declare module '*.css';
+declare const __SIGNAL_VERSION__: string;
+declare const __SIGNAL_WEB_PREVIEW__: boolean;

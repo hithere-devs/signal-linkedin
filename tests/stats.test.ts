@@ -17,7 +17,11 @@ describe('stats', () => {
 
   it('estimates time saved', () => {
     const s = mergeStats(emptyStats(), { hidden: 20, adsHidden: 10 });
-    expect(estimateTimeSavedMinutes(s)).toBeCloseTo(4.5);
+    expect(estimateTimeSavedMinutes(s)).toBeCloseTo(3);
+  });
+
+  it('does not claim time saved before posts are filtered', () => {
+    expect(estimateTimeSavedMinutes(emptyStats())).toBe(0);
   });
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "signal-linkedin-feed-intelligence",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -27,9 +27,15 @@
     "verify": "node scripts/verify-release.mjs",
     "check": "npm run typecheck && npm test && npm run audit",
     "package": "npm run check && npm run build && npm run verify && node scripts/package.mjs",
-    "zip": "npm run package"
+    "zip": "npm run package",
+    "preview": "npm run build && node scripts/preview.mjs",
+    "build:site": "npm run icons && node scripts/build-site.mjs",
+    "preview:site": "npm run build:site && node scripts/preview.mjs --site",
+    "format": "prettier --write src tests scripts site public",
+    "verify:site": "node scripts/verify-site.mjs"
   },
   "dependencies": {
+    "lucide-react": "^0.468.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -38,6 +44,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "esbuild": "^0.28.2",
+    "prettier": "^3.9.6",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   }

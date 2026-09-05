@@ -87,6 +87,7 @@ export interface AiConfig {
 }
 
 export interface ExtensionSettings {
+  enabled: boolean;
   threshold: number;
   mode: FilterMode;
   hideAds: boolean;
@@ -199,7 +200,7 @@ export type Message =
   | { type: 'cloud:recover'; email: string }
   | { type: 'cloud:sync'; direction?: 'auto' | 'push' | 'pull' }
   | { type: 'cloud:deleteAccount' }
-  | { type: 'openPage'; page: 'dashboard' | 'settings' | 'demo' };
+  | { type: 'openPage'; page: 'dashboard' | 'settings' | 'demo'; section?: 'profile' | 'feed' | 'ai' | 'account' | 'privacy' };
 
 export interface StatsDelta {
   analyzed?: number;

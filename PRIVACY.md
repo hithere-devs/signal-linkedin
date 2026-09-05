@@ -54,3 +54,7 @@ Local data remains until you remove the extension or use **Delete local data** i
 For privacy questions, open an issue at <https://github.com/hithere-devs/signal-linkedin/issues>.
 
 Material changes will be documented in the repository and reflected by a new effective date.
+
+## Interactive web preview
+
+The public web preview uses fictional feed activity. Profile and preference edits in the preview stay in this website's local storage, separate from Chrome extension storage. The preview does not read LinkedIn posts, connect to cloud accounts, or contact AI providers. API key entry is disabled.

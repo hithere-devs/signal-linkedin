@@ -3,56 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Signal Demo Feed</title>
+  <title>Signal | Interactive demo</title>
   <link rel="stylesheet" href="demo.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="demo-brand"><span class="demo-logo" aria-hidden="true">in</span><strong>Professional Feed</strong></div>
-    <div class="demo-search">Search</div>
-    <nav aria-label="Demo navigation"><span>Home</span><span>Network</span><span>Jobs</span><span>Messages</span></nav>
-  </header>
-  <main class="layout">
-    <aside class="left-panel">
-      <div class="avatar">AM</div>
-      <strong>Alex Morgan</strong>
-      <p>Software engineer building developer tools</p>
-      <dl><div><dt>Profile views</dt><dd>128</dd></div><div><dt>Saved posts</dt><dd>24</dd></div></dl>
-    </aside>
-
-    <section class="feed" aria-label="Synthetic feed used for Signal screenshots">
-      <div class="demo-note"><strong>Demo feed</strong><span>Synthetic posts, real Signal scoring UI</span></div>
-      <article class="feed-post" data-score="92" data-category="technical" data-positive="Concrete benchmark|Actionable steps|Strong topic match">
-        <header><div class="post-avatar">RP</div><div><strong>Riya Patel</strong><span>Staff Engineer · Developer Infrastructure</span><small>2h</small></div></header>
-        <h2>Feed post</h2>
-        <p>We cut CI time by 43% across 120 repositories. Here are the seven changes that mattered, the failed experiments, and the exact cache settings we use now.</p>
-        <div class="code-sample">cache.restore(keys) → build affected packages → cache.save()</div>
-        <footer><span>Useful</span><span>Comment</span><span>Share</span></footer>
-      </article>
-
-      <article class="feed-post" data-score="78" data-category="ai,startup" data-positive="First-hand data|Relevant to AI startups|Clear tradeoffs">
-        <header><div class="post-avatar">DK</div><div><strong>Daniel Kim</strong><span>Founder · AI infrastructure</span><small>4h</small></div></header>
-        <h2>Feed post</h2>
-        <p>We tested four retrieval strategies on 18,000 support questions. Hybrid search improved grounded answers, but only after we fixed chunk boundaries. Results and costs below.</p>
-        <div class="metric-row"><span><b>+19%</b> grounded answers</span><span><b>-31%</b> latency</span><span><b>$0.004</b> per query</span></div>
-        <footer><span>Useful</span><span>Comment</span><span>Share</span></footer>
-      </article>
-
-      <article class="feed-post" data-score="18" data-category="engagement-bait" data-negative="Low information density|Engagement bait">
-        <header><div class="post-avatar">JT</div><div><strong>Jordan Taylor</strong><span>Growth advisor</span><small>5h</small></div></header>
-        <h2>Feed post</h2>
-        <p>Successful people never stop. Agree?</p>
-        <footer><span>Useful</span><span>Comment</span><span>Share</span></footer>
-      </article>
-    </section>
-
-    <aside class="right-panel">
-      <p class="eyebrow">SIGNAL IS ACTIVE</p>
-      <h1>Only useful posts reach the feed.</h1>
-      <p>Threshold <strong>55</strong> · Collapse mode</p>
-      <div class="key"><span><i class="high"></i>70–100</span><span><i class="mid"></i>40–69</span><span><i class="low"></i>0–39</span></div>
-    </aside>
-  </main>
+  <!--
+  THESIS: A readable field guide to your LinkedIn feed, not a wall of settings.
+  OWN-WORLD: Blue ink, pale gray paper, white panels, precise labels, and a shared compact navigation.
+  STORY: Understand filtering, tune the threshold, and keep control of optional AI and sync.
+  FIRST VIEWPORT: Left navigation; page title and date range; outcome strip; activity chart beside the signal-level control. Feed settings pair controls with an example preview.
+  FORM: Field guide annotations, candidate 6, seed 5900966d. Comp 01 selected under delegated creative control; comp 02 informs feed controls.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+  -->
+  <div id="root"></div>
   <script src="demo.js"></script>
 </body>
 </html>

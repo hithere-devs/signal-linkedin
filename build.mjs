@@ -39,6 +39,8 @@ const common = {
   logLevel: 'info',
   define: {
     'process.env.NODE_ENV': '"production"',
+    '__SIGNAL_VERSION__': JSON.stringify(packageJson.version),
+    '__SIGNAL_WEB_PREVIEW__': 'false',
     '__AI_DEFAULTS__': JSON.stringify(aiDefaults),
     '__SIGNAL_CLOUD_CONFIG__': JSON.stringify(cloudConfig)
   }
@@ -50,7 +52,7 @@ const entries = {
   popup: 'src/popup/main.tsx',
   settings: 'src/settings/main.tsx',
   dashboard: 'src/dashboard/main.tsx',
-  demo: 'src/demo/index.ts'
+  demo: 'src/demo/main.tsx'
 };
 
 async function run() {

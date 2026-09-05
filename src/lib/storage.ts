@@ -22,6 +22,20 @@ const K = {
 const CACHE_LIMIT = 600;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
+let settingsWrite: Promise<unknown> = Promise.resolve();
+let statsWrite: Promise<unknown> = Promise.resolve();
+function serializeSettings<T>(write: () => Promise<T>): Promise<T> {
+  const next = settingsWrite.catch(() => {}).then(write);
+  settingsWrite = next;
+  return next;
+}
+
+function serializeStats<T>(write: () => Promise<T>): Promise<T> {
+  const next = statsWrite.catch(() => {}).then(write);
+  statsWrite = next;
+  return next;
+}
+
 export async function getSettings(): Promise<ExtensionSettings> {
   const raw = (await chrome.storage.local.get(K.settings))[K.settings];
   return normalizeSettings(raw as Partial<ExtensionSettings>);
@@ -32,13 +46,14 @@ export async function saveSettings(settings: ExtensionSettings): Promise<void> {
 }
 
 export async function patchSettings(patch: Partial<ExtensionSettings>): Promise<ExtensionSettings> {
-  const current = await getSettings();
-  const next = normalizeSettings({ ...current, ...patch });
-  await saveSettings(next);
-  // Scores depend on weights, profile, and AI configuration. Clearing the
-  // small local cache keeps a setting change from serving stale decisions.
-  await clearCache();
-  return next;
+  return serializeSettings(async () => {
+    const current = await getSettings();
+    const next = normalizeSettings({ ...current, ...patch });
+    await saveSettings(next);
+    // Display controls do not change scores and should not discard the cache.
+    if (patch.weights || patch.ai) await clearCache();
+    return next;
+  });
 }
 
 export async function getAi(): Promise<ExtensionSettings['ai']> {
@@ -46,8 +61,13 @@ export async function getAi(): Promise<ExtensionSettings['ai']> {
 }
 
 export async function patchAi(patch: Partial<ExtensionSettings['ai']>): Promise<ExtensionSettings> {
-  const current = await getSettings();
-  return patchSettings({ ai: { ...current.ai, ...patch } });
+  return serializeSettings(async () => {
+    const current = await getSettings();
+    const next = normalizeSettings({ ...current, ai: { ...current.ai, ...patch } });
+    await saveSettings(next);
+    await clearCache();
+    return next;
+  });
 }
 
 export async function getProfile(): Promise<UserProfile> {
@@ -161,9 +181,11 @@ export async function getBootstrap(): Promise<BootstrapPayload> {
 }
 
 export async function addStats(delta: import('../types').StatsDelta): Promise<void> {
-  const key = `${K.statsPrefix}${todayKey()}`;
-  const current = ((await chrome.storage.local.get(key))[key] as DailyStats | undefined) ?? emptyStats();
-  await chrome.storage.local.set({ [key]: mergeStats(current, delta) });
+  return serializeStats(async () => {
+    const key = `${K.statsPrefix}${todayKey()}`;
+    const current = ((await chrome.storage.local.get(key))[key] as DailyStats | undefined) ?? emptyStats();
+    await chrome.storage.local.set({ [key]: mergeStats(current, delta) });
+  });
 }
 
 export async function getTodayStats(): Promise<DailyStats> {
@@ -175,18 +197,22 @@ export async function getStatsHistory(days: number): Promise<DailyStats[]> {
   const out: DailyStats[] = [];
   const safeDays = Math.max(1, Math.min(90, Math.round(Number.isFinite(days) ? days : 7)));
   for (let i = 0; i < safeDays; i++) {
-    const d = new Date(Date.now() - i * 86400000);
-    const key = `${K.statsPrefix}${d.toISOString().slice(0, 10)}`;
-    const s = ((await chrome.storage.local.get(key))[key] as DailyStats | undefined) ?? emptyStats(d.toISOString().slice(0, 10));
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const date = todayKey(d);
+    const key = `${K.statsPrefix}${date}`;
+    const s = ((await chrome.storage.local.get(key))[key] as DailyStats | undefined) ?? emptyStats(date);
     out.push(s);
   }
   return out;
 }
 
 export async function resetStats(): Promise<void> {
-  const all = await chrome.storage.local.get(null);
-  const keys = Object.keys(all).filter((k) => k.startsWith(K.statsPrefix));
-  if (keys.length) await chrome.storage.local.remove(keys);
+  return serializeStats(async () => {
+    const all = await chrome.storage.local.get(null);
+    const keys = Object.keys(all).filter((k) => k.startsWith(K.statsPrefix));
+    if (keys.length) await chrome.storage.local.remove(keys);
+  });
 }
 
 export async function exportData(): Promise<Record<string, unknown>> {

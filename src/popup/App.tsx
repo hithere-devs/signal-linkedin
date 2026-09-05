@@ -1,195 +1,178 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { BootstrapPayload, CloudStatus, DailyStats, ExtensionSettings } from '../types';
-import { avgScore, estimateTimeSavedMinutes } from '../lib/stats';
+import { useEffect, useState } from 'react';
+import {
+  ArrowUpRight,
+  Blend,
+  ChevronRight,
+  ChevronsDownUp,
+  EyeOff,
+  ListFilter,
+  Pause,
+  Play,
+  Settings2,
+  ShieldCheck,
+} from 'lucide-react';
+import type { DailyStats } from '../types';
+import { FILTER_MODES } from '../lib/filtering';
+import { formatMinutes } from '../lib/insights';
+import { estimateTimeSavedMinutes } from '../lib/stats';
+import { isPreview } from '../lib/environment';
 import { sendMessage } from '../lib/runtime';
+import {
+  LoadingState,
+  Notice,
+  SignalMark,
+  ThemeButton,
+  ThresholdControl,
+  Toggle,
+} from '../ui/components';
+import { errorMessage, useWorkspace } from '../ui/useWorkspace';
 
-const PRESETS: Array<[string, number]> = [
-  ['Off', 0],
-  ['Chill', 30],
-  ['Balanced', 55],
-  ['Strict', 75],
-  ['Only best', 90]
-];
-
-const MODES: Array<{ value: ExtensionSettings['mode']; label: string; hint: string }> = [
-  { value: 'collapse', label: 'Collapse', hint: 'Replace hidden posts with a small card' },
-  { value: 'hide', label: 'Hide', hint: 'Remove hidden posts entirely' },
-  { value: 'blur', label: 'Blur', hint: 'Blur until clicked' },
-  { value: 'score', label: 'Score only', hint: 'Show everything with a score badge' }
-];
-
-function thresholdLabel(v: number): string {
-  if (v === 0) return 'Off, show everything';
-  if (v < 30) return 'Relaxed';
-  if (v < 60) return 'Balanced';
-  if (v < 85) return 'Strict';
-  return 'Only the best';
-}
+const MODE_ICONS = { collapse: ChevronsDownUp, hide: EyeOff, blur: Blend, score: ListFilter };
 
 export default function App() {
-  const [boot, setBoot] = useState<BootstrapPayload | null>(null);
+  const { boot, error, setError, saving, reload, patchSetting } = useWorkspace();
   const [stats, setStats] = useState<DailyStats | null>(null);
-  const [cloud, setCloud] = useState<CloudStatus | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(() => {
-    setError(null);
-    void Promise.all([
-      sendMessage<BootstrapPayload>({ type: 'bootstrap' }),
-      sendMessage<DailyStats>({ type: 'stats:getToday' }),
-      sendMessage<CloudStatus>({ type: 'cloud:status' })
-    ])
-      .then(([payload, today, cloudStatus]) => {
-        setBoot(payload);
-        setStats(today);
-        setCloud(cloudStatus);
-      })
-      .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
-  }, []);
-
-  useEffect(load, [load]);
-
-  const settings = boot?.settings;
-  const profile = boot?.profile;
-
-  const patch = useCallback(
-    async (key: keyof ExtensionSettings, value: unknown) => {
-      const previous = boot?.settings;
-      setBoot((b) => (b ? { ...b, settings: { ...b.settings, [key]: value } } : b));
-      setError(null);
-      try {
-        const saved = await sendMessage<ExtensionSettings>({ type: 'setSetting', key, value });
-        setBoot((current) => current ? { ...current, settings: saved } : current);
-      } catch (reason) {
-        if (previous) setBoot((current) => current ? { ...current, settings: previous } : current);
-        setError(reason instanceof Error ? reason.message : String(reason));
-      }
-    },
-    [boot?.settings]
-  );
-
-  if (!settings || !profile) {
-    return (
-      <div className="wrap">
-        <div className="loading" role="status">{error ?? 'Loading Signal…'}</div>
-        {error && <button className="btn full" onClick={load}>Try again</button>}
-      </div>
+  useEffect(() => {
+    void sendMessage<DailyStats>({ type: 'stats:getToday' })
+      .then(setStats)
+      .catch((reason) => setError(errorMessage(reason)));
+  }, [setError]);
+  const open = (page: 'settings' | 'dashboard', section?: 'profile' | 'feed' | 'ai') => {
+    void sendMessage({ type: 'openPage', page, section }).catch((reason) =>
+      setError(errorMessage(reason))
     );
-  }
-
-  const filtered = stats ? stats.hidden : 0;
-  const timeSaved = stats ? estimateTimeSavedMinutes(stats) : 0;
-
+  };
+  if (!boot)
+    return (
+      <main className="popup-page">
+        <LoadingState error={error} compact onRetry={() => void reload()} />
+      </main>
+    );
+  const { settings } = boot;
   return (
-    <div className="wrap">
-      <header className="header">
-        <div className="logo-row">
-          <span className="logo-mark" />
-          <div>
-            <h1>SIGNAL</h1>
-            <p>LinkedIn Feed Intelligence</p>
-          </div>
+    <main className="popup-page">
+      <header className="popup-header">
+        <div className="brand">
+          <SignalMark small />
+          <span>Signal</span>
         </div>
-        <button
-          className="account-link"
-          title={cloud?.signedIn ? `Signed in as ${cloud.user?.email}` : 'Open account settings'}
-          onClick={() => void sendMessage({ type: 'openPage', page: 'settings' }).catch((reason) => setError(String(reason)))}
-        >
-          <span className={`sync-dot ${cloud?.signedIn ? 'online' : ''}`} aria-hidden="true" />
-          {cloud?.signedIn ? 'Synced' : 'Account'}
-        </button>
-      </header>
-
-      {error && <div className="popup-error" role="alert">{error}</div>}
-
-      <section className="card slider-card">
-        <div className="score-display">
-          <span className="big-score">{settings.threshold}</span>
-          <span className={`threshold-label ${settings.threshold === 0 ? 'off' : ''}`}>{thresholdLabel(settings.threshold)}</span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          step={1}
-          value={settings.threshold}
-          aria-label="Minimum post score"
-          onChange={(e) => void patch('threshold', Number(e.target.value))}
-        />
-        <div className="presets">
-          {PRESETS.map(([label, v]) => (
-            <button
-              key={label}
-              className={`preset ${settings.threshold === v ? 'active' : ''}`}
-              onClick={() => void patch('threshold', v)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <p className="hint">Posts scoring below this are filtered from your feed.</p>
-      </section>
-
-      <section className="card">
-        <h2>Filtering mode</h2>
-        <div className="mode-grid">
-          {MODES.map((m) => (
-            <button
-              key={m.value}
-              className={`mode ${settings.mode === m.value ? 'active' : ''}`}
-              title={m.hint}
-              onClick={() => void patch('mode', m.value)}
-            >
-              {m.label}
-            </button>
-          ))}
-        </div>
-        <div className="toggle-row">
-          <div>
-            <div className="toggle-label">Hide sponsored content</div>
-            <div className="toggle-sub">Removes LinkedIn ads from your feed</div>
-          </div>
-          <label className="switch">
-            <input type="checkbox" checked={settings.hideAds} onChange={(e) => void patch('hideAds', e.target.checked)} />
-            <span className="slider-ui" />
-          </label>
-        </div>
-        <div className="toggle-row">
-          <div>
-            <div className="toggle-label">AI deep analysis</div>
-            <div className="toggle-sub">
-              {settings.ai.enabled ? `On · ${settings.ai.model || 'model not set'}` : 'Off, using local heuristics'}
-            </div>
-          </div>
-          <button className="btn btn-small" onClick={() => void sendMessage({ type: 'openPage', page: 'settings' }).catch((reason) => setError(String(reason)))}>
-            Configure
+        <div className="popup-header-actions">
+          <ThemeButton />
+          <button
+            className="icon-button"
+            aria-label="Open Signal settings"
+            onClick={() => open('settings')}
+          >
+            <Settings2 size={17} />
           </button>
         </div>
-      </section>
-
-      <section className="card">
-        <h2>Your interests</h2>
-        <p className="interests">{[...profile.interests.slice(0, 4), ...profile.industries.slice(0, 3)].join(' · ') || 'Not configured'}</p>
-        <button className="btn full" onClick={() => void sendMessage({ type: 'openPage', page: 'settings' }).catch((reason) => setError(String(reason)))}>
-          Edit profile
-        </button>
-      </section>
-
-      <section className="card stats-card">
-        <h2>Today's feed</h2>
-        <div className="stats-grid">
-          <div><strong>{stats?.analyzed ?? 0}</strong><span>analyzed</span></div>
-          <div><strong>{(stats?.shown ?? 0)}</strong><span>shown</span></div>
-          <div className="filtered"><strong>{filtered}</strong><span>filtered</span></div>
+      </header>
+      {isPreview() && <div className="popup-preview-note">Preview with fictional activity</div>}
+      {error && (
+        <Notice error onDismiss={() => setError(null)}>
+          {error}
+        </Notice>
+      )}
+      <div className={`popup-status${settings.enabled ? '' : ' paused'}`}>
+        <div>
+          <span className="status-dot" />
+          <strong>
+            {settings.enabled
+              ? settings.mode === 'score'
+                ? 'Scoring your feed'
+                : 'Filtering your feed'
+              : 'Signal is paused'}
+          </strong>
+          <span className="popup-save" role="status">
+            {saving ? 'Saving...' : settings.ai.enabled ? 'AI assisted' : 'On this device'}
+          </span>
         </div>
-        {(stats?.shown ?? 0) > 0 && (
-          <p className="avg">Avg score shown {avgScore(stats!.scoreShownSum, stats!.shown)} · hidden {avgScore(stats!.scoreHiddenSum, stats!.hidden)}</p>
-        )}
-        <p className="time-saved">≈{timeSaved < 1 ? '<1' : Math.round(timeSaved)} min of scrolling saved</p>
-        <button className="btn full" onClick={() => void sendMessage({ type: 'openPage', page: 'dashboard' }).catch((reason) => setError(String(reason)))}>
-          Open dashboard
+        <button
+          className="icon-button"
+          type="button"
+          aria-label={settings.enabled ? 'Pause filtering' : 'Resume filtering'}
+          title={settings.enabled ? 'Pause filtering' : 'Resume filtering'}
+          onClick={() => void patchSetting('enabled', !settings.enabled)}
+        >
+          {settings.enabled ? <Pause size={15} /> : <Play size={15} />}
         </button>
+      </div>
+      <section className="popup-threshold" aria-labelledby="popup-threshold-title">
+        <div className="popup-section-title">
+          <h1 id="popup-threshold-title">Your signal level</h1>
+          <span>Minimum score</span>
+        </div>
+        <ThresholdControl
+          value={settings.threshold}
+          onChange={(value) => void patchSetting('threshold', value)}
+          compact
+        />
       </section>
-    </div>
+      <section className="popup-modes" aria-labelledby="popup-mode-title">
+        <h2 id="popup-mode-title">Handle the noise</h2>
+        <div className="popup-mode-grid" role="group" aria-label="Filtering mode">
+          {FILTER_MODES.map((mode) => {
+            const Icon = MODE_ICONS[mode.value];
+            return (
+              <button
+                type="button"
+                key={mode.value}
+                className={settings.mode === mode.value ? 'active' : ''}
+                aria-pressed={settings.mode === mode.value}
+                title={mode.description}
+                onClick={() => void patchSetting('mode', mode.value)}
+              >
+                <Icon size={18} strokeWidth={1.6} />
+                <span>{mode.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="popup-mode-hint">
+          {FILTER_MODES.find((mode) => mode.value === settings.mode)?.description}
+        </p>
+        <Toggle
+          label="Hide sponsored posts"
+          description={settings.mode === 'score' ? 'Not applied in score-only mode' : undefined}
+          checked={settings.hideAds}
+          disabled={settings.mode === 'score'}
+          onChange={(value) => void patchSetting('hideAds', value)}
+        />
+      </section>
+      <section className="popup-today" aria-labelledby="today-title">
+        <div className="popup-today-title">
+          <h2 id="today-title">Today</h2>
+          <span>
+            {stats?.hidden
+              ? `${formatMinutes(estimateTimeSavedMinutes(stats))} saved, estimated`
+              : 'No posts filtered yet'}
+          </span>
+        </div>
+        <div className="popup-stat-row">
+          <div>
+            <strong>{stats?.analyzed ?? 0}</strong>
+            <span>Reviewed</span>
+          </div>
+          <div>
+            <strong className="positive">{stats?.shown ?? 0}</strong>
+            <span>Kept</span>
+          </div>
+          <div>
+            <strong>{stats?.hidden ?? 0}</strong>
+            <span>Filtered</span>
+          </div>
+        </div>
+      </section>
+      <footer className="popup-footer">
+        <button className="btn btn-primary full-width" onClick={() => open('dashboard')}>
+          Open your workspace
+          <ArrowUpRight size={14} />
+        </button>
+        <span>
+          <ShieldCheck size={12} />
+          Open source. Local by default.
+        </span>
+      </footer>
+    </main>
   );
 }

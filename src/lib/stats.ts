@@ -1,7 +1,9 @@
 import type { DailyStats, StatsDelta } from '../types';
 
-export function todayKey(): string {
-  return new Date().toISOString().slice(0, 10);
+export function todayKey(date = new Date()): string {
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export function emptyStats(date: string = todayKey()): DailyStats {
@@ -41,7 +43,8 @@ export function mergeStats(base: DailyStats, delta: StatsDelta): DailyStats {
 
 export function estimateTimeSavedMinutes(stats: DailyStats): number {
   const secondsPerFilteredPost = 9;
-  return ((stats.hidden + stats.adsHidden) * secondsPerFilteredPost) / 60;
+  // Ads are already included in hidden. Counting them again inflated the estimate.
+  return (stats.hidden * secondsPerFilteredPost) / 60;
 }
 
 export function avgScore(sum: number, count: number): number {

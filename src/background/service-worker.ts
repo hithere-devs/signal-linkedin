@@ -34,7 +34,7 @@ async function handleAnalyze(features: PostFeatures): Promise<AnalyzeResponse> {
 
   let result: AnalysisResult = result0;
 
-  if (!features.isAd && needsDeepAnalysis(heur) && settings.ai.enabled && semaphore.canRun()) {
+  if (settings.enabled && !features.isAd && needsDeepAnalysis(heur) && settings.ai.enabled && semaphore.canRun()) {
     const provider = getProvider(settings.ai);
     if (provider) {
       semaphore.acquire();
@@ -103,6 +103,7 @@ async function route(msg: Message): Promise<unknown> {
       return store.getStatsHistory(msg.days ?? 7);
     case 'stats:reset':
       await store.resetStats();
+      await markForSync();
       return true;
     case 'data:export':
       return store.exportData();
@@ -111,8 +112,8 @@ async function route(msg: Message): Promise<unknown> {
       return true;
     case 'ai:test': {
       const ai = await store.getAi();
-      const provider = getProvider(ai);
-      if (!provider) return { ok: false, error: 'AI provider not configured (enable it and set base URL + model)' };
+      const provider = getProvider({ ...ai, enabled: true });
+      if (!provider) return { ok: false, error: 'Add a provider URL and model before testing the connection.' };
       return provider.testConnection();
     }
     case 'cloud:status':
@@ -131,7 +132,9 @@ async function route(msg: Message): Promise<unknown> {
       return cloud.deleteAccount();
     case 'openPage':
       if (msg.page !== 'dashboard' && msg.page !== 'settings' && msg.page !== 'demo') throw new Error('Unsupported page.');
-      await chrome.tabs.create({ url: chrome.runtime.getURL(`${msg.page}.html`) });
+      const sections = ['profile', 'feed', 'ai', 'account', 'privacy'];
+      const hash = msg.page === 'settings' && msg.section && sections.includes(msg.section) ? `#${msg.section}` : '';
+      await chrome.tabs.create({ url: chrome.runtime.getURL(`${msg.page}.html${hash}`) });
       return true;
     default:
       throw new Error('Unsupported message.');

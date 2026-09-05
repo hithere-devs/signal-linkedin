@@ -5,6 +5,10 @@ export interface RuntimeResponse<T> {
 }
 
 export function sendMessage<T>(message: unknown): Promise<T> {
+  if (isPreview()) {
+    return import('../preview/runtime').then(({ sendPreviewMessage }) => sendPreviewMessage(message as Message) as Promise<T>);
+  }
+  if (!isExtension()) return Promise.reject(new Error('Open Signal from the Chrome extension, or run npm run preview for the local demo.'));
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(message, (response: RuntimeResponse<T> | undefined) => {
       const runtimeError = chrome.runtime.lastError;
@@ -20,3 +24,5 @@ export function sendMessage<T>(message: unknown): Promise<T> {
     });
   });
 }
+import { isExtension, isPreview } from './environment';
+import type { Message } from '../types';

@@ -1,43 +1,61 @@
 import type { AnalysisResult } from '../types';
 
 export const SHADOW_CSS = `
-:host{all:initial;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+:host{all:initial;display:block;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light}
 *,*::before,*::after{box-sizing:border-box}
-button{font-family:inherit}
-.sf-badge{position:absolute;top:10px;right:14px;z-index:60;display:flex;align-items:center;gap:6px;
-  background:rgba(8,12,20,.82);border:1px solid rgba(255,255,255,.12);color:#e6edf3;border-radius:999px;
-  padding:4px 10px;font-size:11px;font-weight:600;line-height:1;cursor:pointer;backdrop-filter:blur(6px);
-  box-shadow:0 2px 10px rgba(0,0,0,.25);transition:transform .15s ease, box-shadow .15s ease}
-.sf-badge:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.35)}
-.sf-dot{width:7px;height:7px;border-radius:50%}
-.sf-panel{position:absolute;top:34px;right:14px;z-index:70;width:272px;background:#0d1421;color:#dbe4ee;
-  border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);
-  display:none;font-size:12px}
-.sf-open .sf-panel{display:block}
-.sf-score-row{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.sf-big{font-size:22px;font-weight:700}
-.sf-sub{color:#8b98a9;font-size:11px}
-.sf-dims{display:flex;flex-direction:column;gap:5px;margin:10px 0;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
-.sf-dim{display:flex;align-items:center;gap:8px}
-.sf-dim span:first-child{width:86px;color:#93a1b3;font-size:10.5px;text-transform:capitalize;white-space:nowrap}
-.sf-bar{flex:1;height:4px;background:rgba(255,255,255,.09);border-radius:2px;overflow:hidden}
-.sf-fill{height:100%;border-radius:2px;background:#5b9dff}
-.sf-why{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
-.sf-why li{line-height:1.45;color:#b7c3d2}
-.sf-why li.pos::before{content:"+ ";color:#34d399;font-weight:700}
-.sf-why li.neg::before{content:"− ";color:#f87171;font-weight:700}
-.sf-actions{display:flex;gap:6px;margin-top:12px}
-.sf-btn{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#dbe4ee;
-  border-radius:8px;padding:6px 8px;font-size:11px;font-weight:600;cursor:pointer;text-align:center}
-.sf-btn:hover{background:rgba(255,255,255,.13)}
-.sf-badge:focus-visible,.sf-btn:focus-visible{outline:2px solid #5b9dff;outline-offset:2px}
-@media(prefers-reduced-motion:reduce){.sf-badge{transition:none}}
+button{font-family:inherit;cursor:pointer}
+.sf-badge{position:absolute;top:12px;right:14px;z-index:60;display:inline-flex;align-items:center;gap:6px;min-height:30px;background:#fff;border:1px solid #dfe5ef;color:#344766;border-radius:7px;padding:0 9px;font-size:11px;font-weight:650;line-height:1;transition:background-color .16s ease,border-color .16s ease}
+.sf-badge:hover{border-color:#4764d7;background:#f3f6ff}
+.sf-dot{width:6px;height:6px;flex:0 0 auto;border-radius:50%}
+.sf-brand{width:11px;height:11px;color:#5b6d86}
+.sf-panel{position:fixed;inset:auto;z-index:2147483647;width:304px;max-width:calc(100vw - 24px);max-height:calc(100vh - 24px);overflow:auto;background:#fff;color:#25344c;border:0;border-radius:14px;padding:19px;box-shadow:0 10px 40px rgba(25,40,70,.22);display:none;font-size:12px;margin:0}
+.sf-panel:popover-open,.sf-open .sf-panel{display:block}
+.sf-panel-head{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#5b6d86;margin-bottom:10px}
+.sf-close{display:grid;place-items:center;width:25px;height:25px;background:transparent;border:0;border-radius:5px;color:#5b6d86;padding:0}
+.sf-close:hover{background:#f0f3f8}
+.sf-score-row{display:flex;align-items:baseline;gap:7px;margin-bottom:4px}
+.sf-big{font-size:32px;font-weight:650;letter-spacing:-.025em}
+.sf-sub{color:#5b6d86;font-size:10px;line-height:1.6}
+.sf-tags{margin:0 0 13px;color:#5b6d86;font-size:10px}
+.sf-dims{display:flex;flex-direction:column;gap:10px;margin:16px 0 0;padding-top:14px;border-top:1px solid #dfe5ef}
+.sf-dim{display:grid;grid-template-columns:94px 1fr 24px;align-items:center;gap:8px}
+.sf-dim-label{color:#5b6d86;font-size:10px;white-space:nowrap}
+.sf-dim-value{text-align:right;font-size:10px;color:#43556f;font-variant-numeric:tabular-nums}
+.sf-bar{height:4px;background:#eaf0f8;border-radius:4px;overflow:hidden}
+.sf-fill{height:100%;border-radius:inherit;background:#4764d7}
+.sf-why{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.sf-why li{display:flex;align-items:flex-start;gap:7px;line-height:1.6;color:#43556f;font-size:11px}
+.sf-why li::before{content:"";width:5px;height:5px;flex:0 0 auto;margin-top:6px;border-radius:50%;background:#217767}
+.sf-why li.neg::before{background:#b33f42}
+.sf-actions{display:flex;gap:6px;margin-top:18px}
+.sf-btn{flex:1;min-height:34px;background:#f7f9fc;border:1px solid #dfe5ef;color:#43556f;border-radius:7px;padding:0 8px;font-size:10px;font-weight:550;text-align:center;transition:background-color .16s ease}
+.sf-btn:hover{background:#edf1ff;border-color:#c2ccdb}
+.sf-btn:disabled{cursor:default;opacity:.6}
+.sf-feedback-status{font-size:9px;color:#5b6d86;margin:10px 0 0;line-height:1.6}
+.sf-badge:focus-visible,.sf-btn:focus-visible,.sf-close:focus-visible{outline:2px solid #4764d7;outline-offset:3px}
+:host([data-signal-theme="dark"]){color-scheme:dark}:host([data-signal-theme="dark"]) .sf-badge,:host([data-signal-theme="dark"]) .sf-panel{background:#1b2433;color:#e6edf7}:host([data-signal-theme="dark"]) .sf-badge{border-color:#455770}:host([data-signal-theme="dark"]) .sf-badge:hover{background:#253456}:host([data-signal-theme="dark"]) .sf-panel-head,:host([data-signal-theme="dark"]) .sf-sub,:host([data-signal-theme="dark"]) .sf-tags,:host([data-signal-theme="dark"]) .sf-dim-label,:host([data-signal-theme="dark"]) .sf-feedback-status,:host([data-signal-theme="dark"]) .sf-close{color:#a0b0c7}:host([data-signal-theme="dark"]) .sf-why li,:host([data-signal-theme="dark"]) .sf-dim-value{color:#c1cde0}:host([data-signal-theme="dark"]) .sf-dims{border-color:#303d52}:host([data-signal-theme="dark"]) .sf-bar{background:#303d52}:host([data-signal-theme="dark"]) .sf-fill{background:#92a8ff}:host([data-signal-theme="dark"]) .sf-btn{background:#222e40;color:#e6edf7;border-color:#455770}:host([data-signal-theme="dark"]) .sf-btn:hover,:host([data-signal-theme="dark"]) .sf-close:hover{background:#29364b}
+@media(prefers-reduced-motion:reduce){.sf-badge,.sf-btn{transition:none}}
 `;
 
+/** Match the post's actual surface, rather than assuming the OS theme matches LinkedIn. */
+export function postTheme(root: HTMLElement): 'light' | 'dark' {
+  const explicit = document.documentElement.dataset.theme;
+  if (explicit === 'light' || explicit === 'dark') return explicit;
+  let element: HTMLElement | null = root;
+  for (let depth = 0; element && depth < 8; depth++, element = element.parentElement) {
+    const color = getComputedStyle(element).backgroundColor;
+    if (!/^rgba?\(/.test(color)) continue;
+    const values = color.match(/[\d.]+/g)?.map(Number);
+    if (!values || (values.length > 3 && values[3] < 0.5)) continue;
+    return values[0] * 0.2126 + values[1] * 0.7152 + values[2] * 0.0722 < 128 ? 'dark' : 'light';
+  }
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 export function scoreColor(score: number): string {
-  if (score >= 70) return '#34d399';
-  if (score >= 40) return '#fbbf24';
-  return '#f87171';
+  if (score >= 70) return '#268574';
+  if (score >= 40) return '#ac7b23';
+  return '#c25b5e';
 }
 
 const DIM_LABELS: Array<[keyof import('../types').Dimensions, string]> = [
@@ -47,15 +65,19 @@ const DIM_LABELS: Array<[keyof import('../types').Dimensions, string]> = [
   ['originality', 'Originality'],
   ['evidence', 'Evidence'],
   ['techDepth', 'Tech depth'],
-  ['careerValue', 'Career value']
+  ['careerValue', 'Career value'],
 ];
 
 export interface BadgeCallbacks {
-  onFeedback(dir: 'up' | 'down'): void;
+  onFeedback(dir: 'up' | 'down'): void | Promise<void>;
+  feedbackAcknowledgement?: string;
   onShowAnyway(): void;
 }
 
-export function attachBadge(root: HTMLElement, cb: BadgeCallbacks): { update(result: AnalysisResult, hidden: boolean): void; destroy(): void } {
+export function attachBadge(
+  root: HTMLElement,
+  cb: BadgeCallbacks
+): { update(result: AnalysisResult, hidden: boolean): void; destroy(): void } {
   // The LinkedIn renderer can move extension-owned nodes into an inner
   // wrapper during a rerender. Remove every stale badge descendant, not only
   // direct children. The attribute is a presence marker with an empty value.
@@ -65,6 +87,7 @@ export function attachBadge(root: HTMLElement, cb: BadgeCallbacks): { update(res
   // Keep a truthy marker for compatibility with an older unpacked build that
   // used a truthiness check while cleaning up stale hosts.
   host.dataset.signalBadge = '1';
+  host.dataset.signalTheme = postTheme(root);
   host.style.cssText = 'position:absolute;top:0;right:0;';
   const shadow = host.attachShadow({ mode: 'open' });
 
@@ -74,41 +97,75 @@ export function attachBadge(root: HTMLElement, cb: BadgeCallbacks): { update(res
 
   let open = false;
 
-  function toggle() {
-    open = !open;
-    shadow.querySelector('.sf-wrap')?.classList.toggle('sf-open', open);
-    shadow.querySelector('.sf-badge')?.setAttribute('aria-expanded', String(open));
+  function close() {
+    open = false;
+    const panel = shadow.querySelector<HTMLElement>('.sf-panel');
+    if (panel?.matches(':popover-open')) panel.hidePopover();
+    shadow.querySelector('.sf-wrap')?.classList.remove('sf-open');
+    shadow.querySelector('.sf-badge')?.setAttribute('aria-expanded', 'false');
   }
 
-  shadow.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const action = target.closest('[data-action]')?.getAttribute('data-action');
-    if (!action) return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (action === 'toggle') toggle();
-    if (action === 'up') {
-      cb.onFeedback('up');
-      target.textContent = 'Thanks';
+  function toggle() {
+    if (open) {
+      close();
+      return;
     }
-    if (action === 'down') {
-      cb.onFeedback('down');
-      target.textContent = 'Noted';
+    const panel = shadow.querySelector<HTMLElement>('.sf-panel');
+    const button = shadow.querySelector<HTMLButtonElement>('.sf-badge');
+    if (!panel || !button) return;
+    open = true;
+    const rect = button.getBoundingClientRect();
+    panel.style.left = `${Math.max(12, Math.min(rect.right - 304, window.innerWidth - 316))}px`;
+    panel.style.top = `${rect.bottom + 7}px`;
+    if (typeof panel.showPopover === 'function') panel.showPopover();
+    else shadow.querySelector('.sf-wrap')?.classList.add('sf-open');
+    const height = panel.getBoundingClientRect().height;
+    if (rect.bottom + height + 19 > window.innerHeight)
+      panel.style.top = `${Math.max(12, rect.top - height - 7)}px`;
+    button.setAttribute('aria-expanded', 'true');
+  }
+
+  shadow.addEventListener('click', async (event) => {
+    const target = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
+    const action = target?.dataset.action;
+    if (!action || !target) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (action === 'toggle') toggle();
+    if (action === 'close') {
+      close();
+      shadow.querySelector<HTMLButtonElement>('.sf-badge')?.focus();
+    }
+    if (action === 'up' || action === 'down') {
+      const buttons = shadow.querySelectorAll<HTMLButtonElement>(
+        '[data-action="up"], [data-action="down"]'
+      );
+      buttons.forEach((button) => {
+        button.disabled = true;
+      });
+      const status = shadow.querySelector<HTMLElement>('.sf-feedback-status');
+      try {
+        await cb.onFeedback(action);
+        target.textContent = 'Saved';
+        if (status)
+          status.textContent = cb.feedbackAcknowledgement ?? 'Feedback saved for future scores.';
+      } catch {
+        buttons.forEach((button) => {
+          button.disabled = false;
+        });
+        if (status) status.textContent = "Feedback wasn't saved. Please try again.";
+      }
     }
     if (action === 'show') {
+      close();
       cb.onShowAnyway();
-      open = false;
-      shadow.querySelector('.sf-wrap')?.classList.remove('sf-open');
     }
   });
 
   shadow.addEventListener('keydown', (event) => {
     if ((event as KeyboardEvent).key !== 'Escape' || !open) return;
-    open = false;
-    shadow.querySelector('.sf-wrap')?.classList.remove('sf-open');
-    const button = shadow.querySelector<HTMLButtonElement>('.sf-badge');
-    button?.setAttribute('aria-expanded', 'false');
-    button?.focus();
+    close();
+    shadow.querySelector<HTMLButtonElement>('.sf-badge')?.focus();
   });
 
   function update(result: AnalysisResult, hidden: boolean) {
@@ -118,34 +175,49 @@ export function attachBadge(root: HTMLElement, cb: BadgeCallbacks): { update(res
       wrap.className = 'sf-wrap';
       wrap.innerHTML = `
         <button type="button" class="sf-badge" data-action="toggle" aria-label="Open Signal score details" aria-expanded="false" aria-controls="signal-score-panel">
-          <span class="sf-dot"></span><span class="sf-score"></span>
+          <svg class="sf-brand" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 10V7m4 3V4m4 6V1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sf-dot"></span><span class="sf-score"></span>
         </button>
-        <div class="sf-panel" id="signal-score-panel" role="region" aria-label="Signal score details"></div>`;
+        <div class="sf-panel" id="signal-score-panel" popover="auto" role="region" aria-label="Signal score details"></div>`;
       shadow.appendChild(wrap);
+      shadow.querySelector('.sf-panel')?.addEventListener('toggle', (event) => {
+        open = (event as ToggleEvent).newState === 'open';
+        shadow.querySelector('.sf-badge')?.setAttribute('aria-expanded', String(open));
+      });
     }
 
     const dot = shadow.querySelector<HTMLElement>('.sf-dot')!;
     dot.style.background = scoreColor(result.score);
     shadow.querySelector<HTMLElement>('.sf-score')!.textContent = `${result.score}`;
 
+    shadow
+      .querySelector('.sf-badge')!
+      .setAttribute('aria-label', `Signal score ${result.score} out of 100. Open score details`);
     const dimsHtml = DIM_LABELS.map(
-      ([k, label]) => `<div class="sf-dim"><span>${label}</span><div class="sf-bar"><div class="sf-fill" style="width:${result.dimensions[k]}%;background:${scoreColor(result.dimensions[k])}"></div></div></div>`
+      ([k, label]) =>
+        `<div class="sf-dim"><span class="sf-dim-label">${label}</span><div class="sf-bar" aria-hidden="true"><div class="sf-fill" style="width:${Math.max(0, Math.min(100, result.dimensions[k]))}%"></div></div><span class="sf-dim-value">${Math.round(result.dimensions[k])}</span></div>`
     ).join('');
 
-    const pos = result.reasons.positive.slice(0, 4).map((r) => `<li class="pos">${escapeHtml(r)}</li>`).join('');
-    const neg = result.reasons.negative.slice(0, 4).map((r) => `<li class="neg">${escapeHtml(r)}</li>`).join('');
-    const tags = escapeHtml(result.classification.slice(0, 4).join(' · '));
+    const pos = result.reasons.positive
+      .slice(0, 4)
+      .map((r) => `<li class="pos">${escapeHtml(r)}</li>`)
+      .join('');
+    const neg = result.reasons.negative
+      .slice(0, 4)
+      .map((r) => `<li class="neg">${escapeHtml(r)}</li>`)
+      .join('');
+    const tags = escapeHtml(result.classification.slice(0, 4).join(', ').replace(/-/g, ' '));
 
     shadow.querySelector<HTMLElement>('.sf-panel')!.innerHTML = `
-      <div class="sf-score-row"><span class="sf-big" style="color:${scoreColor(result.score)}">${result.score}</span>
-      <span class="sf-sub">/100 · ${tags}</span></div>
+      <div class="sf-panel-head"><span>Signal score details</span><button class="sf-close" data-action="close" aria-label="Close score details"><svg width="13" height="13" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3L3 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button></div>
+      <div class="sf-score-row"><span class="sf-big">${result.score}</span><span class="sf-sub">/100</span></div><p class="sf-tags">${tags}</p>
+      <span class="sf-sub">${result.provider === 'heuristic' ? 'Scored on this device' : 'AI-assisted score'}</span>
       ${pos || neg ? `<ul class="sf-why">${pos}${neg}</ul>` : ''}
       <div class="sf-dims">${dimsHtml}</div>
       <div class="sf-actions">
         <button type="button" class="sf-btn" data-action="up">Useful</button>
         <button type="button" class="sf-btn" data-action="down">Not useful</button>
         ${hidden ? '<button type="button" class="sf-btn" data-action="show">Show anyway</button>' : ''}
-      </div>`;
+      </div><p class="sf-feedback-status" role="status">${cb.feedbackAcknowledgement ? 'Feedback controls are safe to try in this demo.' : 'Your feedback helps shape future scores.'}</p>`;
   }
 
   function destroy() {
@@ -160,5 +232,8 @@ export function attachBadge(root: HTMLElement, cb: BadgeCallbacks): { update(res
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
+  return s.replace(
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c
+  );
 }

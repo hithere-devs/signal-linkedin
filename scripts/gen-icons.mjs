@@ -48,10 +48,10 @@ function encodePng(width, height, rgba) {
 }
 
 const TRANSPARENT = [0, 0, 0, 0];
-const BG = [13, 20, 33, 255];
-const BORDER = [46, 61, 82, 255];
-const FG = [52, 211, 153, 255];
-const FG2 = [110, 231, 183, 255];
+const BG = [71, 100, 215, 255];
+const BORDER = [71, 100, 215, 255];
+const FG = [255, 255, 255, 255];
+const FG2 = [255, 255, 255, 255];
 
 function insideRoundedRect(x, y, left, top, right, bottom, radius) {
   const cx = Math.max(left + radius, Math.min(x, right - radius));
