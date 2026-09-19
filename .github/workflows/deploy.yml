@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build:site
+      - run: npm run verify:site
+      - name: Deploy to mutefeed.lol
+        env:
+          SSH_KEY: ${{ secrets.MUTEFEED_SSH_KEY }}
+          HOST: ${{ secrets.MUTEFEED_HOST }}
+          MUTEFEED_OWN_MODEL_KEY: ${{ secrets.MUTEFEED_OWN_MODEL_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_KEY"
+          test -n "$HOST"
+          test -n "$MUTEFEED_OWN_MODEL_KEY"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/mutefeed
+          chmod 600 ~/.ssh/mutefeed
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND='ssh -i ~/.ssh/mutefeed -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes'
+          SSH="$GIT_SSH_COMMAND"
+          rsync -az --delete -e "$SSH" site-dist/ "ubuntu@${HOST}:/var/www/mutefeed/"
+          rsync -az -e "$SSH" server/ "ubuntu@${HOST}:/opt/mutefeed/server/"
+          printf 'MUTEFEED_OWN_MODEL_KEY=%s\n' "$MUTEFEED_OWN_MODEL_KEY" | $SSH "ubuntu@${HOST}" 'cat > /opt/mutefeed/.env && chmod 600 /opt/mutefeed/.env'
+          $SSH "ubuntu@${HOST}" 'sudo systemctl restart mutefeed-score && curl -fsS http://127.0.0.1:8787/api/health'

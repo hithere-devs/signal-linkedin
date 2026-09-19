@@ -1,0 +1,18 @@
+[Unit]
+Description=Mute Feed Hush scoring API
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/mutefeed
+EnvironmentFile=-/opt/mutefeed/.env
+ExecStart=/usr/bin/node /opt/mutefeed/server/score.mjs
+Restart=always
+RestartSec=2
+MemoryMax=200M
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
